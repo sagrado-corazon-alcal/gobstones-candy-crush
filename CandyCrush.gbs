@@ -1,0 +1,84 @@
+interactive program {
+	K_ARROW_LEFT  -> { Mover(Oeste) }
+ 	K_ARROW_RIGHT -> { Mover(Este) }
+	K_ARROW_UP    -> { Mover(Norte) }
+	K_ARROW_DOWN  -> { Mover(Sur) }
+	
+	K_F -> { JugarHacia(Oeste) }
+	K_T -> { JugarHacia(Norte) }
+	K_H -> { JugarHacia(Este)  }
+	K_G -> { JugarHacia(Sur)   }
+	
+	_ -> {}
+}
+ 
+procedure JugarHacia(dir) {
+	IntercambiarCarameloSiPuedeAl(dir)
+	MarcarPosicion()
+	EvolucionarTablero()
+	VolverAUltimaPosicion()
+	ActualizarMovimientos()
+}
+
+procedure EvolucionarTablero() {
+	while (hayAlgunJuego()) {
+		BorrarTodosLosJuegos()
+		CaerTodosLosCaramelos()
+	}
+}
+
+procedure BorrarTodosLosJuegos() {
+	IrAlOrigen() 
+	while (haySiguiente ()) {
+		BorrarJuegoSiHay() 
+		IrAlSiguiente() 
+	}
+	BorrarJuegoSiHay() 
+}
+
+procedure BorrarJuegoSiHay() {
+	if (hayJuegoHaciaAlgunLado()) {
+		BorrarJuego(direccionDeJuego(), largoDeLinea (direccionDeJuego ()))
+		ActualizarPuntos()
+	}	
+}
+
+procedure IntercambiarCarameloAl(direccion) {
+	carameloSacado := colorCaramelo()
+	Sacar (carameloSacado)
+	Mover (direccion)
+	carameloVecino := colorCaramelo()
+	Sacar (carameloVecino)
+	Poner (carameloSacado)
+	Mover (opuesto (direccion))
+	Poner (carameloVecino)
+}
+
+function puedeIntercambiarAl(direccion) {
+	return (puedeMover(direccion) && hayCarameloAl(direccion))
+}
+
+procedure IntercambiarCarameloSiPuedeAl(direccion) {
+	if (puedeIntercambiarAl (direccion)) {
+		IntercambiarCarameloAl(direccion)
+	}
+}
+
+procedure CaerTodosLosCaramelos() {
+	IrAlOrigen()
+	while (haySiguiente()){
+		CaerCarameloSiCorresponde()
+		IrAlSiguiente()
+	}
+	
+	CaerCarameloSiCorresponde()
+}
+
+procedure BorrarJuego (dir, longitud) {
+	repeat (longitud - 1){ 
+		Sacar (colorCaramelo())
+		Mover (dir)
+	}
+	Sacar (colorCaramelo ())
+	MoverN (longitud - 1, opuesto (dir))
+}

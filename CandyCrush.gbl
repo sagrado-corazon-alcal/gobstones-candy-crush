@@ -1,0 +1,200 @@
+// Cuenta de punto
+procedure IrAContadorPuntos() {
+ IrAlBorde (Norte)
+ IrAlBorde (Oeste)
+}
+
+procedure IrAContadorMovimientos() {
+ IrAlBorde (Norte)
+ IrAlBorde (Este)
+}
+
+procedure ActualizarPuntos() {
+	MarcarPosicion()
+	IrAContadorPuntos()
+	SumarPuntos(10)
+	VolverAUltimaPosicion()
+}
+
+procedure ActualizarMovimientos() {
+ MarcarPosicion()
+ IrAContadorMovimientos()
+ RestarMovimientos(1)
+ VolverAUltimaPosicion()
+}
+procedure RestarMovimientos (cant) {
+ SacarN(cant,Azul)
+}
+
+procedure SumarPuntos(cant) {
+	PonerN(cant, Azul)
+}
+
+function hayTecho() {
+	return (nroBolitas(Negro) == 2)
+}
+
+function hayTechoArriba() {
+	Mover(Norte)
+	return (hayTecho())	
+}
+
+// Candy
+function hayCaramelo () {
+ return (hayBolitas(Azul) || hayBolitas(Verde) || hayBolitas(Rojo))
+}
+
+function hayMarca() {
+	return (nroBolitas(Negro) == 1)
+}
+
+function direccionDeJuego() {
+	if (hayJuegoHacia (Norte)) {
+			dirJuego := Norte
+}
+	if (hayJuegoHacia (Sur)) {
+			dirJuego := Sur 
+}
+	if (hayJuegoHacia (Oeste)) {
+			dirJuego := Oeste
+}
+ if (hayJuegoHacia (Este)) {
+			dirJuego := Este
+}
+	return (dirJuego)
+}
+
+function colorCaramelo() {
+	if (hayBolitas(Rojo)) {
+		caramelo := Rojo
+	}
+	if (hayBolitas(Azul)) {
+		caramelo := Azul
+	}
+	if (hayBolitas(Verde)) {
+		caramelo := Verde
+	}	
+
+	return (caramelo)
+}
+
+function colorCarameloAl(dir) {
+	Mover(dir)
+	return (colorCaramelo())
+}
+
+function largoDeLinea(dir) {
+	colorDeLaLinea := colorCaramelo()
+	cantDeBolitasEnLinea := 1
+
+	while (puedeMover(dir) && hayCarameloAl(dir) && colorCarameloAl(dir) == colorDeLaLinea) {
+		Mover(dir)
+		cantDeBolitasEnLinea := cantDeBolitasEnLinea + 1
+	}
+
+	return (cantDeBolitasEnLinea)
+}
+
+function hayJuegoHacia(dir) {
+	return (hayCaramelo() && largoDeLinea(dir) >= 3)
+}
+
+function debeCaer() {
+ return(puedeMover(Sur) && not hayCarameloAl(Sur))
+}
+
+function hayCarameloAl (direccion){
+	Mover (direccion)
+ 	return (hayCaramelo())
+}
+
+function hayAlgunJuego() {
+	cantDeJuegos:= 0 
+	IrAlOrigen()
+	while (haySiguiente()) {
+		if (hayJuegoHaciaAlgunLado()) {
+			cantDeJuegos:=cantDeJuegos + 1
+		}
+  	IrAlSiguiente()
+	}
+	return(cantDeJuegos > 0)
+}
+
+function hayJuegoHaciaAlgunLado() {
+ return (hayJuegoHacia(Norte) || hayJuegoHacia(Oeste) || hayJuegoHacia(Sur) || hayJuegoHacia(Este))
+}
+
+procedure CaerCarameloSiCorresponde() {
+	if (hayCaramelo() && debeCaer()) {
+		CaerCaramelo()
+	}	
+}
+
+procedure CaerCaramelo() {
+	distancia := 0
+	while (debeCaer()) {
+		PonerAl (colorCaramelo(), Sur)	
+		Sacar (colorCaramelo())
+		Mover(Sur)
+		distancia := 1 + distancia
+	}
+	MoverN(distancia , Norte)
+}
+
+procedure MarcarPosicion() {
+		Poner(Negro) 
+}
+
+procedure VolverAUltimaPosicion() {
+	IrAlOrigen()
+	while (not hayMarca()){
+		IrAlSiguiente()
+	}
+	Sacar(Negro) 
+}
+
+// Recorrido
+
+function haySiguiente(){
+   return(puedeMover(Este) || (puedeMover(Norte) && not hayTechoArriba()))
+}
+
+procedure IrAlOrigen(){
+    IrAlBorde(Oeste)
+    IrAlBorde(Sur)
+}
+
+procedure IrAlSiguiente(){
+   if(puedeMover(Este)){
+     Mover(Este)
+    }else{
+      Mover(Norte)
+      IrAlBorde(Oeste)
+   }
+}
+
+// Auxiliares
+
+procedure PonerN(n, color){
+  repeat(n){
+   Poner(color)
+    }    
+}
+
+procedure MoverN(n, dir) {
+	repeat(n){
+		Mover(dir)
+	}    
+}
+
+procedure PonerAl(color, direccion) {
+	Mover(direccion)
+	Poner(color)
+	Mover(opuesto(direccion))
+}
+
+procedure SacarN(n ,color) {
+ repeat(n) {
+ Sacar(color)
+ }
+}
