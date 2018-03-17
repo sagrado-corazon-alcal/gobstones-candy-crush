@@ -1,0 +1,20 @@
+attire:
+  active: CandyCrush
+  user_permissions:
+    can_toggle_visibility: true
+  visible: true
+board:
+  active: 1
+  initial_board_source: random
+  user_permissions:
+    can_change_source: true
+    can_edit_board: true
+  visible_edition: true
+execution_speed:
+  active: instantaneous
+  user_permissions:
+    can_change_speed: true
+library:
+  visible: true
+name: Candy Crush
+type: code
